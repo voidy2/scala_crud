@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <New id="testEnvEntry" class="org.eclipse.jetty.plus.jndi.EnvEntry">
+    <Arg></Arg>
+    <Arg>testValue</Arg>
+    <Arg type="java.lang.String">It works</Arg>
+    <Arg type="boolean">true</Arg>
+  </New>
+</Configure>
+
+
