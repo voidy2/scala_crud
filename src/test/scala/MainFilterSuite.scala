@@ -1,15 +1,15 @@
 package com.example
 
 import org.scalatra._
-import org.scalatra.test.scalatest._
-import org.scalatest.matchers._
+import org.scalatra.test.specs._
 
-class MyScalatraFilterSuite extends ScalatraFunSuite with ShouldMatchers {
-  addFilter(classOf[MyScalatraFilter], "/*")
+class MainFilterSuite extends ScalatraSpecification {
 
-  test("GET / returns status 200") {
-    get("/") { 
-      status should equal (200)
+  "index page test" should {
+    "status => 200" in {
+      get("/") {
+        status mustEqual 200
+      }
     }
   }
 }

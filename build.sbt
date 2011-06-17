@@ -16,6 +16,8 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.8" % "test",
   "org.scalatra" %% "scalatra" % "2.0.0-SNAPSHOT",
   "org.scalatra" %% "scalatra-scalate" % "2.0.0-SNAPSHOT",
+  "org.scalatra" %% "scalatra-test" % "2.0.0-SNAPSHOT",
+  "org.scalatra" %% "scalatra-specs" % "2.0.0-SNAPSHOT",
   "ch.qos.logback" % "logback-classic" % "0.9.25",
   "org.fusesource.scalate" % "scalate-core" % "1.5.0-SNAPSHOT",
   "org.mortbay.jetty" % "jetty" % "6.1.26" % "test",
