@@ -3,13 +3,40 @@ package com.example
 import org.scalatra._
 import java.net.URL
 import scalate.ScalateSupport
+import main.scala.db._
+import org.squeryl.PrimitiveTypeMode._
+import sjson.json._
 
 class MainFilter extends ScalatraFilter with ScalateSupport {
+
+def startDatabaseSession():Unit = {
+  import org.squeryl.Session
+  import org.squeryl.SessionFactory
+  import org.squeryl.adapters._
+ 
+  Class.forName("org.h2.Driver")
+  SessionFactory.concreteFactory = Some(() =>
+    Session.create(
+      java.sql.DriverManager.getConnection("jdbc:h2:mem:db1"),
+        new H2Adapter))
+}
+
   
-  get("/") {
+    get("/") {
     <html>
       <body>
         <h1>Hello, world!!!</h1>
+        {
+          
+          startDatabaseSession()
+          transaction {
+            Library.create
+            val a1 = Author("do", "Mr", Option("foo@bar.com")).create
+            val a2 = Author("do", "Ms", Option("hoge@bar.com")).create
+            val json = Library.authors_all_to_json
+            Library.authors_from_json(json)
+          }
+        }
         Say <a href="hello-scalate">hello to Scalate</a>.
       </body>
     </html>
@@ -32,3 +59,5 @@ class MainFilter extends ScalatraFilter with ScalateSupport {
   }
   */
 }
+
+
