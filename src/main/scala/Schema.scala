@@ -5,35 +5,18 @@ import java.sql.Timestamp
 import org.squeryl._
 import org.squeryl.PrimitiveTypeMode._
 
-class Author(val id: Long,
-           val firstName: String,
-           val lastName: String,
-           val email: Option[String]) {
-  def this() = this(0,"","",Some(""))
+case class Author(var firstName: String,
+           var lastName: String,
+           var email: Option[String],
+           val id: Int= 0) extends KeyedEntity[Int] {
+  def this() = this("","",Some(""))
+
+  def save = Library.authors.update(this)
 }
 
 // fields can be mutable or immutable 
 
-class Book(val id: Long, 
-            var title: String,
-           var authorId: Long,
-           var coAuthorId: Option[Long]) {
-
-  def this() = this(0,"",0,Some(0L))
-}
-
-class Borrowal(val id: Long,
-                val bookId: Long,
-                val borrowerAccountId: Long,
-                val scheduledToReturnOn: Date,
-                val returnedOn: Option[Timestamp],
-                val numberOfPhonecallsForNonReturn: Int)
-
 object Library extends Schema {
-  val authors = table[Author]("AUTHORS")
-
-  val books = table[Book]
-
-  val borrowals = table[Borrowal]
+  val authors = table[Author]
 }
 
