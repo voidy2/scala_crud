@@ -5,3 +5,7 @@ libraryDependencies <<= (libraryDependencies, appConfiguration) {
   (deps, app) =>
   deps :+ "com.github.siasia" %% "xsbt-web-plugin" % app.provider.id.version
 }
+
+libraryDependencies ++= Seq(
+  "org.fusesource.scalate" % "maven-scalate-plugin" % "1.3.2"
+)
