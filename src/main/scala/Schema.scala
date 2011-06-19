@@ -26,8 +26,8 @@ case class Author(var firstName: String,
   def destroy = Library.authors.delete(this.id)
 
   //import Library.AuthorFormat
-  def toJson = JSON.out(this)
-  def fromJson(bytes: Array[Byte]) = JSON.in(bytes)
+  def toJson = new String(SJSON.out(this))
+  def fromJson(bytes: Array[Byte]) = SJSON.in(bytes)
 }
 
 // fields can be mutable or immutable 
@@ -35,7 +35,7 @@ case class Author(var firstName: String,
 object Library extends Schema with DefaultProtocol {
   val authors = table[Author]
   def authors_all = from(authors)(s => select(s) orderBy(s.id)).toList
-  def authors_all_to_json = tojson(Library.authors_all)
+  def authors_all_to_json = new String(SJSON.out(authors_all))
 
   on(authors)(author => declare(
     author.id is (autoIncremented),
