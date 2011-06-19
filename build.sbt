@@ -6,7 +6,8 @@ resolvers ++= Seq(
   "Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   "Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases",
   "FuseSource Snapshot Repository" at "http://repo.fusesource.com/nexus/content/repositories/snapshots",
-  "Morphia Repo at Google Code" at "http://morphia.googlecode.com/svn/mavenrepo"
+  "Morphia Repo at Google Code" at "http://morphia.googlecode.com/svn/mavenrepo",
+  "orangesignal" at "http://orangesignal.sourceforge.jp/maven2"
 )
 
 libraryDependencies ++= Seq(
@@ -22,7 +23,8 @@ libraryDependencies ++= Seq(
   "org.fusesource.scalate" % "scalate-core" % "1.5.0-SNAPSHOT",
   "org.mortbay.jetty" % "jetty" % "6.1.26" % "test",
   "com.google.code.morphia" % "morphia" % "1.00-SNAPSHOT",
-  "javax.servlet" % "servlet-api" % "2.5"
+  "javax.servlet" % "servlet-api" % "2.5",
+  "jp.sf.orangesignal" % "orangesignal-csv" % "1.3.0"
 )
 
 //jetty-run

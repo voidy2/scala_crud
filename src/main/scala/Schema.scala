@@ -8,17 +8,20 @@ import sjson.json._
 import java.sql.Timestamp
 import JsonSerialization._
 import scala.reflect.BeanInfo
+import jp.sf.orangesignal.csv.manager._
+import java.io._
 
 trait BaseModel extends KeyedEntity[Int] {
   var lastModeified = new Timestamp(System.currentTimeMillis)
+  implicit def toOption[T](x:T) : Option[T] = Option(x)
 }
 
 @BeanInfo
 case class Author(var firstName: String,
            var lastName: String,
-           var email: Option[String],
+           var email: String,
            val id: Int = 0) extends BaseModel {
-  def this() = this("","",Some(""))
+  def this() = this("","","")
 
   def save = Library.authors.update(this)
   def create = Library.authors.insert(this)
@@ -27,6 +30,23 @@ case class Author(var firstName: String,
   import Library.AuthorFormat
   def toJson = tojson(this)
   def fromJson(json: dispatch.json.JsValue) = fromjson[Author](json)
+
+  def toCsv: String = {
+    val writer = new StringWriter
+    import scala.collection.JavaConversions._
+    CsvManagerFactory.newCsvManager.save(List(this), classOf[Author]).to(writer)
+    writer.toString
+  }
+
+  def fromCsv(csv: String) = {
+    val list = new CsvColumnPositionMappingBeanManager()
+      .load(classOf[Author])
+      .column("firstName")
+      .column("lastName")
+      .column("email")
+      .from(new StringReader(csv))
+    list.get(0)
+  }
 }
 
 // fields can be mutable or immutable 

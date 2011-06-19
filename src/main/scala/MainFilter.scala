@@ -26,17 +26,18 @@ def startDatabaseSession():Unit = {
     <html>
       <body>
         <h1>Hello, world!!!</h1>
-        {
-          
+        <pre>{
           startDatabaseSession()
           transaction {
             Library.create
-            val a1 = Author("do", "Mr", Option("foo@bar.com")).create
-            val a2 = Author("do", "Ms", Option("hoge@bar.com")).create
+            val a1 = Author("do", "Mr", "foo@bar.com").create
+            val a2 = Author("do", "Ms", "hoge@bar.com").create
             val json = Library.authors_all_to_json
             Library.authors_from_json(json)
+            a1.toCsv
           }
         }
+        </pre>
         Say <a href="hello-scalate">hello to Scalate</a>.
       </body>
     </html>
