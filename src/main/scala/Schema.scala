@@ -9,13 +9,13 @@ import java.sql.Timestamp
 import JsonSerialization._
 
 trait BaseModel extends KeyedEntity[Int] {
-  val id: Int = 0
   var lastModeified = new Timestamp(System.currentTimeMillis)
 }
 
 case class Author(var firstName: String,
            var lastName: String,
-           var email: Option[String]) extends BaseModel {
+           var email: Option[String],
+           val id: Int = 0) extends BaseModel {
   def this() = this("","",Some(""))
 
   def save = Library.authors.update(this)
@@ -41,6 +41,6 @@ object Library extends Schema with DefaultProtocol {
   ))
 
   implicit def AuthorFormat: Format[Author] = 
-    asProduct3("firstName", "lastName", "email")(Author)(Author.unapply(_).get)
+    asProduct4("firstName", "lastName", "email", "id")(Author)(Author.unapply(_).get)
 }
 
