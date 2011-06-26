@@ -10,10 +10,9 @@ import JsonSerialization._
 import scala.reflect.BeanInfo
 import jp.sf.orangesignal.csv.manager._
 import java.io._
+import java.lang.reflect.ParameterizedType
 
 trait BaseModel extends KeyedEntity[Int] {
-  var lastModeified = new Timestamp(System.currentTimeMillis)
-  implicit def toOption[T](x:T) : Option[T] = Option(x)
 }
 
 @BeanInfo
@@ -23,38 +22,30 @@ case class Author(var firstName: String,
            val id: Int = 0) extends BaseModel {
   def this() = this("","","")
 
-  def save = Library.authors.update(this)
   def create = Library.authors.insert(this)
   def destroy = Library.authors.delete(this.id)
 
+  def paramNameList = List("firstName", "lastName", "email", "id")
+
   import Library.AuthorFormat
+  //ぶっちゃけこのへん使わないかも
   def toJson = tojson(this)
   def fromJson(json: dispatch.json.JsValue) = fromjson[Author](json)
 
-  def toCsv: String = {
-    val writer = new StringWriter
-    import scala.collection.JavaConversions._
-    CsvManagerFactory.newCsvManager.save(List(this), classOf[Author]).to(writer)
-    writer.toString
-  }
-
-  def fromCsv(csv: String) = {
-    val list = new CsvColumnPositionMappingBeanManager()
-      .load(classOf[Author])
-      .column("firstName")
-      .column("lastName")
-      .column("email")
-      .from(new StringReader(csv))
-    list.get(0)
-  }
 }
 
 // fields can be mutable or immutable 
 
 object Library extends Schema with DefaultProtocol {
+
   val authors = table[Author]
+  //このへんはhelperでいい気がしてきた
   def authors_all = from(authors)(s => select(s) orderBy(s.id)).toList
+  //これもいらんかも
+  //コメントでOK
   def authors_all_to_json = tojson(Library.authors_all)
+  //これはいらない気がしてきた
+  //コメントに書くとつかいやすい？
   def authors_from_json(json: dispatch.json.JsValue) = fromjson[List[Author]](json)
 
   on(authors)(author => declare(
@@ -64,5 +55,32 @@ object Library extends Schema with DefaultProtocol {
 
   implicit def AuthorFormat: Format[Author] = 
     asProduct4("firstName", "lastName", "email", "id")(Author)(Author.unapply(_).get)
+
+}
+
+
+object Helper {
+
+  def paramNameList(c: java.lang.Class[_]) = 
+    c.getDeclaredFields.map(_.getName).filter(!_.startsWith("_")).toList
+
+  def toCsv[T <: BaseModel](list: List[T], paramNames: Option[List[String]] = None)
+    (implicit m: ClassManifest[T]): String = {
+      val c = m.erasure.asInstanceOf[java.lang.Class[T]]
+      val writer = new StringWriter
+      import scala.collection.JavaConversions._
+      val saveColumn = new CsvColumnPositionMappingBeanManager().save(list, c)
+      paramNames.getOrElse(paramNameList(c)).foldLeft(saveColumn) { (l, p) => l.column(p) }.to(writer)
+      writer.toString
+  }
+
+  def fromCsv[T <: BaseModel](csv: String, paramNames: Option[List[String]] = None)
+    (implicit m: ClassManifest[T]) = {
+      val c = m.erasure.asInstanceOf[java.lang.Class[T]]
+      val loadColomn = new CsvColumnPositionMappingBeanManager().load(c)
+      paramNames.getOrElse(paramNameList(c)).foldLeft(loadColomn) { (l, p) => l.column(p) }
+        .from(new StringReader(csv))
+  }
+
 }
 

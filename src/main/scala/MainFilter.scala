@@ -33,8 +33,13 @@ def startDatabaseSession():Unit = {
             val a1 = Author("do", "Mr", "foo@bar.com").create
             val a2 = Author("do", "Ms", "hoge@bar.com").create
             val json = Library.authors_all_to_json
-            Library.authors_from_json(json)
-            a1.toCsv
+            //Library.authors_from_json(json)
+            //a1.toCsv
+            //a1.toJson
+            val csv = Helper.toCsv(List(a1))
+            csv
+            Helper.fromCsv[Author]("aa,bb,cc,1")
+            a2
           }
         }
         </pre>
